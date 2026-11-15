@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusNotes - Admin Panel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: linear-gradient(to bottom, #1c0f0f, #2c1a1a); color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; width: 100%; padding: 30px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2); text-align: center; }
+        h1 { font-size: 2rem; font-weight: 600; color: #ff5722; margin-bottom: 20px; }
+        .messages { margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; max-height: 300px; overflow-y: auto; text-align: left; }
+        .messages p { padding: 10px; background: rgba(255, 255, 255, 0.2); border-radius: 8px; margin-bottom: 5px; font-size: 0.95rem; }
+        .refresh-btn { padding: 10px 20px; background: #ff5722; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .refresh-btn:hover { background: #f4511e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Panel (Read-Only) 🛡️</h1>
+        <div class="messages" id="adminNotesList">
+            <p>Loading notes...</p>
+        </div>
+        <button class="refresh-btn" onclick="fetchAdminNotes()">Refresh Notes</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Note: Change localhost to your host IP if accessing externally, 
+        // but for browser-to-host mapping during local testing, localhost:3000 works.
+        const API_URL = "http://localhost:3000/api/notes";
+
+        function fetchAdminNotes() {
+            $.get(API_URL, function(data) {
+                
+                let notesHtml = "";
+                
+                if(data.length === 0) {
+                    notesHtml = "<p>No notes found in database.</p>";
+                } 
+                
+                else {
+                    data.forEach(note => {
+                        notesHtml += `<p><strong>[${new Date(note.createdAt).toLocaleString()}]</strong> ${note.text}</p>`;
+                    });
+                }
+                $("#adminNotesList").html(notesHtml);
+            }).fail(function() {
+                $("#adminNotesList").html("<p style='color: #ff8a80;'>Error connecting to API.</p>");
+            });
+        }
+
+        $(document).ready(function() {
+            fetchAdminNotes();
+        });
+    </script>
+</body>
+</html>
