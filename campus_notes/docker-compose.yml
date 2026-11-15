@@ -1,0 +1,70 @@
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: campus_frontend
+    ports:
+      - "8080:80"
+    networks:
+      - public_net
+
+  
+
+  admin:
+    build: ./admin
+    container_name: campus_admin
+    ports:
+      - "8081:80"
+    networks:
+      - public_net
+
+  
+  api:
+    build: ./api
+    container_name: campus_api
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://campus_mongo:27017/campus_notes
+
+    networks:
+      - public_net
+      - private_net
+
+
+  stats:
+    build: ./stats
+    container_name: campus_stats
+    ports:
+      - "3001:3001"
+    environment:
+      - API_URL=http://api:3000/api/stats
+    networks:
+      - public_net
+
+
+
+  mongo:
+    image: mongo:latest
+    container_name: campus_mongo
+    networks:
+      - private_net
+
+    # no host exposed, mongo db will talk through private_network to the api backend routes 
+
+
+networks:
+  public_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
+
+  private_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.29.0.0/16
+          gateway: 172.29.0.1
+  
