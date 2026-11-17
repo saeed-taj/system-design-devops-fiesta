@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata: 
+  name: fastapi-hpa-deployment
+
+spec:
+  replicas: 1
+  
+  selector:
+    matchLabels:
+      app: fastapi-hpa
+
+  template:
+    metadata:
+      labels:
+        app: fastapi-hpa
+     
+    spec:
+      containers:
+        - name: fastapi-container
+          image: fastapi-hpa:v1
+        
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8000 
+
+          resources:
+            requests:
+              cpu: 200m
+              memory: 128Mi
+
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
