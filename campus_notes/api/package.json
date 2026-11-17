@@ -1,0 +1,11 @@
+{
+  "name": "campus-notes-api",
+  "version": "1.0.0",
+  "description": "Express API for CampusNotes",
+  "main": "server.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.1"
+  }
+}
